@@ -19,6 +19,7 @@ r = session.post(url='https://businessenglishpod.com/aMember/login',
                       'Referer': 'https://businessenglishpod.com/aMember/member',
                       'Connection': 'keep-alive'})
 
+# Init shelve to presist dict
 log=shelve.open('download_log.db', writeback=True)
 if (len(log)==0):
     log['log']={}
@@ -40,7 +41,7 @@ def download_course(course_url):
         print("has been downloaded")
         return
 
-    while True:
+    while True: # try to connect the website until success
         try:
             print("Crawling",course_url)
             course_page=session.get(url=course_url)
@@ -86,6 +87,8 @@ def download_course(course_url):
 
    
 if __name__ == '__main__':
+
+    # Init the thread pool
     executor = concurrent.futures.ThreadPoolExecutor(max_workers=10)
     for course_url in podcast_list():
         executor.submit(download_course, course_url)
